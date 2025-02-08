@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Foto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .form-container img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-container input,
+        .form-container textarea,
+        .form-container button {
+            width: 100%;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-container button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Tambah Foto</h2>
+        <!-- Pratinjau Gambar -->
+        <img id="photo-preview" src="#" alt="Pratinjau Foto" style="display: none;">
+        <form id="add-photo-form">
+            <input type="file" id="photo-upload" accept="image/*" required>
+            <textarea id="photo-description" placeholder="Deskripsi produk" required></textarea>
+            <input type="text" id="photo-price" placeholder="Harga produk" required>
+            <button type="submit">Tambahkan Foto</button>
+        </form>
+    </div>
+
+    <script>
+        // Referensi elemen
+        const photoUpload = document.getElementById("photo-upload");
+        const photoPreview = document.getElementById("photo-preview");
+
+        // Tampilkan pratinjau foto
+        photoUpload.addEventListener("change", () => {
+            const file = photoUpload.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    photoPreview.src = e.target.result;
+                    photoPreview.style.display = "block"; // Tampilkan pratinjau
+                };
+
+                reader.readAsDataURL(file); // Konversi file ke base64
+            }
+        });
+
+        // Tambahkan foto ke localStorage dan arahkan ke halaman galeri
+        document.getElementById("add-photo-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const photoDescription = document.getElementById("photo-description").value;
+            const photoPrice = document.getElementById("photo-price").value;
+
+            if (!photoUpload.files[0] || !photoDescription || !photoPrice) {
+                alert("Harap isi semua field!");
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                const storedPhotos = JSON.parse(localStorage.getItem("photos")) || [];
+                storedPhotos.push({
+                    src: reader.result,
+                    description: photoDescription,
+                    price: photoPrice
+                });
+
+                localStorage.setItem("photos", JSON.stringify(storedPhotos));
+                window.location.href = "./details/jh.php"; // Redirect ke galeri jh.php
+            };
+
+            reader.readAsDataURL(photoUpload.files[0]);
+        });
+    </script>
+</body>
+</html>
